@@ -44,6 +44,7 @@ export class PreloadScene extends Phaser.Scene {
       ["forest-archive-rat", "forest-archive-rat"],
       ["frog-bug", "frog-bug"],
       ["bird", "bird"],
+      ["bat", "bat"],
       ["start-mol", "start-mol"],
       ["mona-portrait", "mona-intro"],
       ["ducky-intro", "ducky-intro"],
@@ -103,6 +104,9 @@ export class PreloadScene extends Phaser.Scene {
     }
     if (this.textures.exists("bird")) {
       this.textures.get("bird").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+    if (this.textures.exists("bat")) {
+      this.textures.get("bat").setFilter(Phaser.Textures.FilterMode.NEAREST);
     }
     if (this.textures.exists("forest-archive-rat")) {
       this.textures.get("forest-archive-rat").setFilter(Phaser.Textures.FilterMode.NEAREST);

@@ -9,7 +9,7 @@ import { TouchControls } from "../systems/TouchControls";
 /**
  * Final stand on the Mainline. The Copilot Orb hovers at the end of the
  * arena — touching it restores the sacred Mainline and triggers victory.
- * Roaming corruption bugs (plus penalty bugs from missed knowledge checks)
+ * Roaming corruption bats (plus penalty bats from missed knowledge checks)
  * still try to stop you on the way.
  */
 export class BossMainlineScene extends Phaser.Scene {
@@ -78,7 +78,7 @@ export class BossMainlineScene extends Phaser.Scene {
       { x: 360, y: ground - 60, range: 200 },
       { x: 720, y: ground - 60, range: 220 },
     ];
-    for (const e of baseEnemies) this.enemies.add(new CorruptionEnemy(this, e.x, e.y, e.range, undefined, 110, true));
+    for (const e of baseEnemies) this.enemies.add(new CorruptionEnemy(this, e.x, e.y, e.range, "bat", 110, true));
     this.spawnPenaltyBugs(this.wrongAnswers, ground);
     this.physics.add.overlap(this.player, this.enemies, () => this.onHit(), undefined, this);
 
@@ -137,7 +137,7 @@ export class BossMainlineScene extends Phaser.Scene {
 
     if (this.wrongAnswers > 0) {
       this.time.delayedCall(400, () => {
-        const noun = this.wrongAnswers === 1 ? "bug" : "bugs";
+        const noun = this.wrongAnswers === 1 ? "bat" : "bats";
         this.hud.flashWarning(`⚠ ${this.wrongAnswers} extra ${noun} from missed knowledge checks!`);
       });
     }
@@ -176,7 +176,7 @@ export class BossMainlineScene extends Phaser.Scene {
     for (let i = 0; i < count; i++) {
       const x = margin + ((i + 1) * span) / (count + 1);
       const range = 160 + (i % 3) * 60;
-      this.enemies.add(new CorruptionEnemy(this, x, ground - 60, range, undefined, 110, true));
+      this.enemies.add(new CorruptionEnemy(this, x, ground - 60, range, "bat", 110, true));
     }
   }
 
