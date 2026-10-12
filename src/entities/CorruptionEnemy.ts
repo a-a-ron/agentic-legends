@@ -4,6 +4,7 @@ export class CorruptionEnemy extends Phaser.Physics.Arcade.Sprite {
   private patrolMin: number;
   private patrolMax: number;
   private speed: number;
+  private direction = 1;
 
   constructor(scene: Phaser.Scene, x: number, y: number, range: number, textureKey?: string, speed = 55) {
     const tex = textureKey ?? ensureTexture(scene);
@@ -24,12 +25,12 @@ export class CorruptionEnemy extends Phaser.Physics.Arcade.Sprite {
 
   override update() {
     if (this.x < this.patrolMin) {
-      this.setVelocityX(this.speed);
-      this.setFlipX(false);
+      this.direction = 1;
     } else if (this.x > this.patrolMax) {
-      this.setVelocityX(-this.speed);
-      this.setFlipX(true);
+      this.direction = -1;
     }
+    this.setVelocityX(this.direction * this.speed);
+    this.setFlipX(this.direction < 0);
   }
 }
 
