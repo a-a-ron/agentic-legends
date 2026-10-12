@@ -3,15 +3,19 @@ import Phaser from "phaser";
 export class CorruptionEnemy extends Phaser.Physics.Arcade.Sprite {
   private patrolMin: number;
   private patrolMax: number;
-  private speed = 55;
+  private speed: number;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, range: number) {
-    const tex = ensureTexture(scene);
+  constructor(scene: Phaser.Scene, x: number, y: number, range: number, textureKey?: string, speed = 55) {
+    const tex = textureKey ?? ensureTexture(scene);
     super(scene, x, y, tex);
+    if (textureKey) {
+      this.setDisplaySize(82, 66);
+    }
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setCollideWorldBounds(false);
     this.setBounce(0);
+    this.speed = speed;
     this.patrolMin = x - range;
     this.patrolMax = x + range;
     this.setVelocityX(this.speed);

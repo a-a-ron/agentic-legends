@@ -29,6 +29,9 @@ export interface LevelConfig {
   topColor: number;
   bottomColor: number;
   worldWidth: number;
+  enemyTextureKey?: string;
+  enemySpeed?: number;
+  enemyName?: string;
   platforms: PlatformDef[];
   enemies: Array<{ x: number; y: number; range: number }>;
   hiddenPlatforms?: PlatformDef[]; // visible only with "goggles"
@@ -116,7 +119,7 @@ export abstract class BaseLevelScene extends Phaser.Scene {
 
     this.enemies = this.physics.add.group();
     for (const e of cfg.enemies) {
-      const enemy = new CorruptionEnemy(this, e.x, e.y, e.range);
+      const enemy = new CorruptionEnemy(this, e.x, e.y, e.range, cfg.enemyTextureKey, cfg.enemySpeed);
       this.enemies.add(enemy);
     }
     // Penalty bugs from previously-missed knowledge checks.
@@ -400,11 +403,11 @@ export abstract class BaseLevelScene extends Phaser.Scene {
     for (let i = 0; i < count; i++) {
       const x = margin + ((i + 1) * span) / (count + 1);
       const range = 160 + (i % 3) * 60;
-      const enemy = new CorruptionEnemy(this, x, ground - 60, range);
+      const enemy = new CorruptionEnemy(this, x, ground - 60, range, cfg.enemyTextureKey, cfg.enemySpeed);
       this.enemies.add(enemy);
     }
     this.time.delayedCall(400, () => {
-      const noun = count === 1 ? "bug" : "bugs";
+      const noun = count === 1 ? cfg.enemyName ?? "bug" : `${cfg.enemyName ?? "bug"}s`;
       this.hud.flashWarning(`⚠ ${count} extra ${noun} from missed knowledge checks!`);
     });
   }

@@ -7,6 +7,12 @@ This project follows [Semantic Versioning](https://semver.org/) and
 Versions in the `0.x` range are **beta** — APIs, levels, and balance may
 change at any time. The first GA release will be `1.0.0`.
 
+## [0.1.14] - Beta
+
+### Changed
+- **Forest Archive Rats.** Replaced the first level's corruption bugs with the
+  supplied pixel-art rat sprite; rats patrol slowly along the ground.
+
 ## [0.1.13] - Beta
 
 ### Changed

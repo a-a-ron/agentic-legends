@@ -38,6 +38,7 @@ export class PreloadScene extends Phaser.Scene {
     const keys: Array<[string, string]> = [
       ["title-art", "title-art"],
       ["forest-archive-bg", "forest-archive-bg"],
+      ["forest-archive-rat", "forest-archive-rat"],
       ["start-mol", "start-mol"],
       ["mona-portrait", "mona-intro"],
       ["ducky-intro", "ducky-intro"],
@@ -59,7 +60,6 @@ export class PreloadScene extends Phaser.Scene {
       const url = urlFor(slug);
       if (url) this.load.image(key, url);
     }
-
     const walkUrl = urlFor("adventurer-walk");
     if (walkUrl) {
       this.load.spritesheet("adventurer-walk", walkUrl, {
@@ -87,6 +87,9 @@ export class PreloadScene extends Phaser.Scene {
 
   create() {
     document.getElementById("boot-msg")?.remove();
+    if (this.textures.exists("forest-archive-rat")) {
+      this.textures.get("forest-archive-rat").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
     if (this.textures.exists("adventurer-walk")) {
       // Pixel-art: avoid bilinear blur on upscale.
       this.textures.get("adventurer-walk").setFilter(Phaser.Textures.FilterMode.NEAREST);

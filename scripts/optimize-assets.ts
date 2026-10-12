@@ -51,6 +51,7 @@ interface AssetSpec {
 const ASSETS: AssetSpec[] = [
   { file: "title-art.png", slug: "title-art", portrait: false, cover: { width: 1280, height: 720, position: "top" } },
   { file: "forest-archive-bg.png", slug: "forest-archive-bg", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
+  { file: "forest-archive-rat.png", slug: "forest-archive-rat", portrait: false, passthrough: true },
   { file: "start-mol.png", slug: "start-mol", portrait: false },
   { file: "mona-intro.png", slug: "mona-intro", portrait: false, passthrough: true },
   { file: "ducky-intro.png", slug: "ducky-intro", portrait: true },

@@ -17,6 +17,9 @@ export class LevelMonaScene extends BaseLevelScene {
       topColor: 0x120a05,
       bottomColor: 0x2e1408,
       worldWidth: 3600,
+      enemyTextureKey: "forest-archive-rat",
+      enemySpeed: 24,
+      enemyName: "rat",
       platforms: [
         { x: 1800, y: ground, w: 3600 },
         { x: 500, y: ground - 140, w: 180 },
