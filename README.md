@@ -65,7 +65,7 @@ pnpm run preview  # http://localhost:4173/agentic-legends/
 Pushes to `main` are built and published to GitHub Pages by
 `.github/workflows/deploy.yml`. Once the workflow has run and Pages is enabled
 ("Source: GitHub Actions"), the game lives at
-<https://arilivigni.github.io/agentic-legends/>.
+<https://a-a-ron.github.io/agentic-legends/>.
 
 ## Project layout
 
