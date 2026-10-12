@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { PHYSICS } from "../config";
+import { AudioBus } from "../systems/AudioBus";
 import { getTouchInput, type TouchInputState } from "../systems/TouchControls";
 
 export type Power = "fork" | "bubbles" | "goggles";
@@ -32,6 +33,8 @@ export class Adventurer extends Phaser.Physics.Arcade.Sprite {
   private badges?: Phaser.GameObjects.Container;
   private lastJumpTapAt = -1000;
   private facingRight = true;
+  private wasOnFloor = true;
+  private prevVy = 0;
 
   // Natural facing direction of each animation's source frames. Walk frames
   // were drawn facing right; idle frames were drawn facing left; jump/fall
@@ -200,6 +203,7 @@ export class Adventurer extends Phaser.Physics.Arcade.Sprite {
     this.invulnerableUntil = now + 1200;
     this.setVelocityY(-300);
     this.setVelocityX(this.flipX ? 240 : -240);
+    this.spawnFloatingText("-1 ♥", "#ff6b81");
     this.scene.tweens.add({
       targets: this,
       alpha: { from: 0.2, to: 1 },
@@ -256,12 +260,22 @@ export class Adventurer extends Phaser.Physics.Arcade.Sprite {
           scale: { from: this.scale * 1.1, to: this.scale },
           duration: 220,
         });
+        AudioBus.doubleJump();
+        this.spawnFloatingText("LEAP!", "#6cd0ff");
+        this.spawnDust(this.x, this.y + this.displayHeight / 2 - 4, 4);
         jumped = true;
       } else if (this.jumpsRemaining > 0) {
+        const isDouble = this.jumpsRemaining === 1 && this.powers.has("fork");
         const baseV = this.jumpsRemaining === 2 ? PHYSICS.jumpVelocity : PHYSICS.doubleJumpVelocity;
         const v = sprinting ? baseV * 1.15 : baseV;
         this.setVelocityY(v);
         this.jumpsRemaining -= 1;
+        if (isDouble) {
+          AudioBus.doubleJump();
+        } else {
+          AudioBus.jump();
+        }
+        this.spawnDust(this.x, this.y + this.displayHeight / 2 - 4, 3);
         jumped = true;
       }
       // Restart the jump anim from frame 0 on every successful jump trigger
@@ -281,5 +295,54 @@ export class Adventurer extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityY((this.body?.velocity.y ?? 0) * 0.5);
     }
     this.jumpHeld = jumpDown;
+
+    // Landing dust puff & audio
+    const currentVy = this.body?.velocity.y ?? 0;
+    if (!this.wasOnFloor && onFloor && this.prevVy > 160) {
+      this.spawnDust(this.x, this.y + this.displayHeight / 2 - 4, 5);
+      AudioBus.land();
+    }
+    if (sprinting && moving && onFloor && Math.random() < 0.2) {
+      this.spawnDust(this.x + (this.facingRight ? -14 : 14), this.y + this.displayHeight / 2 - 4, 1);
+    }
+    this.wasOnFloor = onFloor;
+    this.prevVy = currentVy;
+  }
+
+  private spawnDust(x: number, y: number, count: number = 3) {
+    if (!this.scene.textures.exists("particle-dust")) return;
+    for (let i = 0; i < count; i++) {
+      const p = this.scene.add.image(x + (Math.random() - 0.5) * 16, y, "particle-dust");
+      p.setAlpha(0.65).setScale(0.8 + Math.random() * 0.5).setDepth(this.depth - 1);
+      this.scene.tweens.add({
+        targets: p,
+        x: p.x + (Math.random() - 0.5) * 28,
+        y: p.y - 4 - Math.random() * 10,
+        alpha: 0,
+        scale: 0.2,
+        duration: 320 + Math.random() * 180,
+        onComplete: () => p.destroy(),
+      });
+    }
+  }
+
+  private spawnFloatingText(text: string, color: string) {
+    const t = this.scene.add.text(this.x, this.y - this.displayHeight / 2 - 10, text, {
+      fontFamily: "system-ui, sans-serif",
+      fontSize: "18px",
+      fontStyle: "bold",
+      color,
+      stroke: "#000000",
+      strokeThickness: 3,
+    }).setOrigin(0.5).setDepth(100);
+
+    this.scene.tweens.add({
+      targets: t,
+      y: t.y - 34,
+      alpha: 0,
+      duration: 650,
+      ease: "Cubic.easeOut",
+      onComplete: () => t.destroy(),
+    });
   }
 }

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { GAME_WIDTH } from "../config";
+import { AudioBus } from "./AudioBus";
 
 export class DialogBox {
   private scene: Phaser.Scene;
@@ -81,6 +82,7 @@ export class DialogBox {
   }
 
   private advance() {
+    AudioBus.uiClick();
     this.idx += 1;
     if (this.idx >= this.lines.length) {
       this.unbind();

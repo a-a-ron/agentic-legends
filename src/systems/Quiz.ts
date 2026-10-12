@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import type { QuizQuestion } from "../data/quizzes";
+import { AudioBus } from "./AudioBus";
 import { shuffleQuestion } from "../util/shuffle";
 import { isTouchDevice } from "./TouchControls";
 
@@ -86,7 +87,12 @@ export class Quiz {
           color: "#e6edf3",
         }).setOrigin(0.5).setScrollFactor(0).setDepth(303);
         if (t.width > rowW - 24) t.setScale((rowW - 24) / t.width);
-        bg.on("pointerover", () => { if (!answered) bg.setFillStyle(0x30363d); });
+        bg.on("pointerover", () => {
+          if (!answered) {
+            bg.setFillStyle(0x30363d);
+            AudioBus.uiHover();
+          }
+        });
         bg.on("pointerout", () => { if (!answered) bg.setFillStyle(0x21262d); });
         bg.on("pointerdown", () => choose(i));
         optionTexts.push(t);
@@ -104,6 +110,7 @@ export class Quiz {
       });
       const continueHandler = () => {
         if (!answered) return;
+        AudioBus.uiClick();
         cleanup();
         resolve({ wrongCount });
       };
@@ -111,16 +118,50 @@ export class Quiz {
       this.scene.input.keyboard?.on("keydown-ENTER", continueHandler);
 
       const choose = (i: number) => {
+        if (answered) return;
         const correct = i === q.correctIndex;
         if (correct) {
           answered = true;
+          AudioBus.quizCorrect();
           optionBgs[i].setFillStyle(0x238636);
+          this.scene.tweens.add({
+            targets: [optionBgs[i], optionTexts[i]],
+            scaleX: 1.03,
+            scaleY: 1.08,
+            duration: 130,
+            yoyo: true,
+          });
+          if (this.scene.textures.exists("particle-sparkle")) {
+            for (let p = 0; p < 16; p++) {
+              const spark = this.scene.add.image(w / 2, yStart + i * rowStep, "particle-sparkle")
+                .setScrollFactor(0).setDepth(310);
+              const angle = (p / 16) * Math.PI * 2;
+              const dist = 40 + Math.random() * 80;
+              this.scene.tweens.add({
+                targets: spark,
+                x: spark.x + Math.cos(angle) * dist,
+                y: spark.y + Math.sin(angle) * dist,
+                alpha: 0,
+                scale: 0.2,
+                duration: 450,
+                onComplete: () => spark.destroy(),
+              });
+            }
+          }
           feedback.setText(q.successMessage).setColor("#3fb950");
           continueLabel.setVisible(true);
           this.scene.tweens.add({ targets: continueLabel, alpha: 0.4, duration: 700, yoyo: true, repeat: -1 });
         } else {
           wrongCount += 1;
+          AudioBus.quizWrong();
           optionBgs[i].setFillStyle(0x6e1c2e);
+          this.scene.tweens.add({
+            targets: [card, header, prompt, feedback, continueLabel, ...optionBgs, ...optionTexts],
+            x: "-=10",
+            duration: 40,
+            yoyo: true,
+            repeat: 3,
+          });
           feedback.setText(q.failureMessage + "\nTry again.").setColor("#ff6b81");
           // Re-enable after a beat
           this.scene.time.delayedCall(900, () => {

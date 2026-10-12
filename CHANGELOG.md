@@ -7,6 +7,21 @@ This project follows [Semantic Versioning](https://semver.org/) and
 Versions in the `0.x` range are **beta** — APIs, levels, and balance may
 change at any time. The first GA release will be `1.0.0`.
 
+## [0.1.11] - Beta
+
+### Added
+- **Custom Hero Title Screen.** Integrated pixel-art title artwork featuring
+  Mona the Octocat, the "RESTORE THE SACRED MAINLINE" banner, twinkling ambient
+  stars, floating motes, and an interactive Start button.
+- **Procedural Web Audio Sound Effects & Music.** Dynamic retro synthesizer
+  effects for jumps, double jumps, landing thuds, hit impacts, reward pickups,
+  quiz correct fanfare, quiz wrong buzzer, UI clicks/hovers, and ambient polyphonic
+  BGM with global audio mute controls.
+- **Game Feel & Visual Polish.** Screen shake on damage and lava collisions,
+  camera flash effects, landing and jump dust particle effects, floating damage
+  numbers (`-1 ♥`), leap cues, Copilot Orb aura particles, and quiz button bounce
+  and sparkle animations.
+
 ## [0.1.10] - Beta
 
 ### Changed

@@ -41,9 +41,15 @@ interface AssetSpec {
    * JPG into a clean transparent orb sprite.
    */
   alphaKey?: { threshold: number; size: number };
+  /**
+   * When set, resize to exact dimensions using fit: 'cover' anchored at
+   * the specified position (default 'top').
+   */
+  cover?: { width: number; height: number; position?: string };
 }
 
 const ASSETS: AssetSpec[] = [
+  { file: "title-art.png", slug: "title-art", portrait: false, cover: { width: 1280, height: 720, position: "top" } },
   { file: "start-mol.png", slug: "start-mol", portrait: false },
   { file: "mona-intro.png", slug: "mona-intro", portrait: true },
   { file: "ducky-intro.png", slug: "ducky-intro", portrait: true },
@@ -117,10 +123,17 @@ async function processOne(spec: AssetSpec) {
   const srcW = meta.width ?? FULL_WIDTH;
   const srcH = meta.height ?? FULL_WIDTH;
 
-  await sharp(srcPath)
-    .resize({ width: Math.min(FULL_WIDTH, srcW), withoutEnlargement: true })
-    .webp({ quality: 78, effort: 5 })
-    .toFile(outFull);
+  if (spec.cover) {
+    await sharp(srcPath)
+      .resize(spec.cover.width, spec.cover.height, { fit: "cover", position: spec.cover.position ?? "top" })
+      .webp({ quality: 82, effort: 5 })
+      .toFile(outFull);
+  } else {
+    await sharp(srcPath)
+      .resize({ width: Math.min(FULL_WIDTH, srcW), withoutEnlargement: true })
+      .webp({ quality: 78, effort: 5 })
+      .toFile(outFull);
+  }
   const fullStat = await fs.stat(outFull);
 
   let portraitStatSize: number | null = null;

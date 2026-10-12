@@ -99,6 +99,18 @@ export class BossMainlineScene extends Phaser.Scene {
     this.tweens.add({ targets: this.orb, y: orbY - 16, duration: 1100, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
     this.tweens.add({ targets: halo, y: orbY - 16, duration: 1100, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
 
+    // Ambient floating energy around Copilot Orb
+    if (this.textures.exists("particle-sparkle")) {
+      this.add.particles(orbX, orbY, "particle-sparkle", {
+        scale: { start: 0.6, end: 0 },
+        alpha: { start: 0.8, end: 0 },
+        speed: { min: 20, max: 60 },
+        lifespan: { min: 600, max: 1200 },
+        frequency: 180,
+        blendMode: Phaser.BlendModes.ADD,
+      }).setDepth(12);
+    }
+
     this.physics.add.overlap(this.player, this.orb, () => this.onOrbTouch(), undefined, this);
 
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
@@ -170,6 +182,8 @@ export class BossMainlineScene extends Phaser.Scene {
     if (this.orbTouched) return;
     if (this.player.damage(this.time.now)) {
       AudioBus.hit();
+      this.cameras.main.shake(180, 0.012);
+      this.cameras.main.flash(120, 255, 60, 60, false);
       this.hud.setHearts(this.player.hearts);
       if (this.player.hearts <= 0) this.gameOver();
     }
@@ -179,7 +193,27 @@ export class BossMainlineScene extends Phaser.Scene {
     if (this.orbTouched) return;
     this.orbTouched = true;
     AudioBus.collect();
+    this.cameras.main.shake(300, 0.02);
     this.cameras.main.flash(400, 200, 230, 255);
+    if (this.textures.exists("particle-sparkle")) {
+      const orbX = GAME_WIDTH - 160;
+      const orbY = GAME_HEIGHT - 240;
+      for (let i = 0; i < 36; i++) {
+        const angle = (i / 36) * Math.PI * 2;
+        const speed = 100 + Math.random() * 200;
+        const p = this.add.image(orbX, orbY, "particle-sparkle").setDepth(200);
+        this.tweens.add({
+          targets: p,
+          x: orbX + Math.cos(angle) * speed,
+          y: orbY + Math.sin(angle) * speed,
+          alpha: 0,
+          scale: 0.1,
+          duration: 600 + Math.random() * 300,
+          ease: "Cubic.easeOut",
+          onComplete: () => p.destroy(),
+        });
+      }
+    }
     this.physics.pause();
     this.time.delayedCall(450, () => this.win());
   }

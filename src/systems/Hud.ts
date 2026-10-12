@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import type { Power } from "../entities/Adventurer";
+import { AudioBus } from "./AudioBus";
 import { isTouchDevice } from "./TouchControls";
 import { addFullscreenButton } from "./FullscreenButton";
 
@@ -101,8 +102,6 @@ export class Hud {
     void panel; void header; void body;
 
     // Tappable restart button — anchored just below the controls panel.
-    // Calls scene.scene.restart() with the scene's initial data so
-    // powers/hearts/wrongAnswers carry across the retry.
     const restartX = scene.scale.width - 32;
     const restartY = panelY + panelH + 28;
     const restartBg = scene.add.circle(restartX, restartY, 22, 0x0d1117, 0.75)
@@ -114,6 +113,7 @@ export class Hud {
     restartBg.on("pointerover", () => restartBg.setFillStyle(0x21262d, 0.85));
     restartBg.on("pointerout", () => restartBg.setFillStyle(0x0d1117, 0.75));
     restartBg.on("pointerdown", () => {
+      AudioBus.uiClick();
       const data = scene.scene.settings.data;
       scene.scene.restart(data);
     });
@@ -122,6 +122,22 @@ export class Hud {
     // Fullscreen toggle — only rendered on touch devices, placed just left
     // of the restart button so both controls stay grouped in the corner.
     addFullscreenButton(scene, restartX - 52, restartY);
+
+    // Mute toggle button — placed left of fullscreen/restart
+    const muteX = touch ? restartX - 104 : restartX - 52;
+    const muteBg = scene.add.circle(muteX, restartY, 22, 0x0d1117, 0.75)
+      .setStrokeStyle(2, 0xf78166).setScrollFactor(0).setDepth(60)
+      .setInteractive({ useHandCursor: true });
+    const muteIcon = scene.add.text(muteX, restartY, AudioBus.isMuted() ? "🔇" : "🔊", {
+      fontSize: "18px",
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(61);
+    muteBg.on("pointerover", () => muteBg.setFillStyle(0x21262d, 0.85));
+    muteBg.on("pointerout", () => muteBg.setFillStyle(0x0d1117, 0.75));
+    muteBg.on("pointerdown", () => {
+      const isMuted = AudioBus.toggleMute();
+      muteIcon.setText(isMuted ? "🔇" : "🔊");
+      if (!isMuted) AudioBus.uiClick();
+    });
   }
 
   setHearts(n: number) {
