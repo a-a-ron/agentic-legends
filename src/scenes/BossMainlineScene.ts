@@ -144,7 +144,7 @@ export class BossMainlineScene extends Phaser.Scene {
       this.scene.start("Title");
     });
 
-    AudioBus.startBackground([220, 233, 277, 330, 277, 233]);
+    AudioBus.startBackground();
   }
 
   private makeRect(x: number, y: number, w: number, h: number, color: number) {

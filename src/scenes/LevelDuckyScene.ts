@@ -44,7 +44,6 @@ export class LevelDuckyScene extends BaseLevelScene {
       rewardPower: "bubbles",
       mentorDialog: MENTOR_DIALOG.ducky,
       startingPlayerTexture: "adventurer-bubbles",
-      bgMusic: [330, 392, 494, 587, 494, 392],
       hideRewardCaption: true,
     };
   }

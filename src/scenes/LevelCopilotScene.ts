@@ -48,7 +48,6 @@ export class LevelCopilotScene extends BaseLevelScene {
       rewardPower: "goggles",
       mentorDialog: MENTOR_DIALOG.copilot,
       startingPlayerTexture: "adventurer-goggles",
-      bgMusic: [392, 494, 587, 698, 880, 698, 587, 494],
       fatalFall: true,
       hideRewardCaption: true,
       lavaPits: [

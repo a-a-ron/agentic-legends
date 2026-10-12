@@ -92,8 +92,8 @@ agentic-legends/
   Images were downscaled for web delivery; cover/title text bands are cropped
   away from in-game character portraits.
 - Engine: [Phaser 3](https://phaser.io) (MIT).
-- Audio: procedurally generated chiptune via the Web Audio API — no external
-  audio files.
+- Audio: sound effects are synthesized with the Web Audio API; the background
+  music is an 8-bit MP3 loop (`src/assets/audio/theme.mp3`).
 
 ## License
 
