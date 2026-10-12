@@ -42,7 +42,7 @@ export class LevelCopilotScene extends BaseLevelScene {
         { x: 900, y: ground - 60, range: 220 },
         { x: 4250, y: ground - 60, range: 220 },
       ],
-      mentor: { x: 4300, y: ground - 80, portraitKey: "copilot-portrait", cropTopFraction: 0.2 },
+      mentor: { x: 4300, y: ground - 80, portraitKey: "copilot-portrait" },
       rewardKey: "goggles-icon",
       rewardPower: "goggles",
       mentorDialog: MENTOR_DIALOG.copilot,

@@ -45,7 +45,7 @@ export class PreloadScene extends Phaser.Scene {
       ["ducky-intro", "ducky-intro"],
       ["ducky-portrait", "ducky"],
       ["copilot-intro", "copilot-intro"],
-      ["copilot-portrait", "copilot-intro-portrait"],
+      ["copilot-portrait", "copilot2"],
       ["adventurer-bubbles", "adventurer-bubbles-portrait"],
       ["adventurer-fork", "adventurer-fork-portrait"],
       ["adventurer-goggles", "adventurer-goggles-portrait"],
@@ -90,6 +90,9 @@ export class PreloadScene extends Phaser.Scene {
     document.getElementById("boot-msg")?.remove();
     if (this.textures.exists("ducky-portrait")) {
       this.textures.get("ducky-portrait").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+    if (this.textures.exists("copilot-portrait")) {
+      this.textures.get("copilot-portrait").setFilter(Phaser.Textures.FilterMode.NEAREST);
     }
     if (this.textures.exists("forest-archive-rat")) {
       this.textures.get("forest-archive-rat").setFilter(Phaser.Textures.FilterMode.NEAREST);
