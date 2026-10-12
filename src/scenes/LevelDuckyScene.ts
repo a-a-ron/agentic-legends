@@ -39,7 +39,7 @@ export class LevelDuckyScene extends BaseLevelScene {
         { x: 2750, y: ground - 60, w: 80 },
         { x: 2750, y: ground - 110, w: 80 },
       ],
-      mentor: { x: 3750, y: ground - 80, portraitKey: "ducky-portrait", cropTopFraction: 0.18 },
+      mentor: { x: 3750, y: ground - 80, portraitKey: "ducky-portrait" },
       rewardKey: "bubbles-icon",
       rewardPower: "bubbles",
       mentorDialog: MENTOR_DIALOG.ducky,

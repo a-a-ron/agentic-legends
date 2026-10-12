@@ -55,6 +55,7 @@ const ASSETS: AssetSpec[] = [
   { file: "forest-archive-rat.png", slug: "forest-archive-rat", portrait: false, passthrough: true },
   { file: "start-mol.png", slug: "start-mol", portrait: false },
   { file: "mona-intro.png", slug: "mona-intro", portrait: false, passthrough: true },
+  { file: "ducky.png", slug: "ducky", portrait: false, passthrough: true },
   { file: "ducky-intro.png", slug: "ducky-intro", portrait: true },
   { file: "copilot-intro.png", slug: "copilot-intro", portrait: true },
   { file: "adventurer-bubbles-of-clarity.png", slug: "adventurer-bubbles", portrait: true },
