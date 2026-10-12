@@ -41,11 +41,19 @@ interface AssetSpec {
    * JPG into a clean transparent orb sprite.
    */
   alphaKey?: { threshold: number; size: number };
+  /**
+   * When set, resize to exact dimensions using fit: 'cover' anchored at
+   * the specified position (default 'top').
+   */
+  cover?: { width: number; height: number; position?: string };
 }
 
 const ASSETS: AssetSpec[] = [
+  { file: "title-art.png", slug: "title-art", portrait: false, cover: { width: 1280, height: 720, position: "top" } },
+  { file: "forest-archive-bg.png", slug: "forest-archive-bg", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
+  { file: "forest-archive-rat.png", slug: "forest-archive-rat", portrait: false, passthrough: true },
   { file: "start-mol.png", slug: "start-mol", portrait: false },
-  { file: "mona-intro.png", slug: "mona-intro", portrait: true },
+  { file: "mona-intro.png", slug: "mona-intro", portrait: false, passthrough: true },
   { file: "ducky-intro.png", slug: "ducky-intro", portrait: true },
   { file: "copilot-intro.png", slug: "copilot-intro", portrait: true },
   { file: "adventurer-bubbles-of-clarity.png", slug: "adventurer-bubbles", portrait: true },
@@ -76,6 +84,10 @@ async function processOne(spec: AssetSpec) {
 
   if (spec.passthrough) {
     const outPng = path.join(OUT_DIR, `${spec.slug}.png`);
+    await Promise.all([
+      fs.rm(path.join(OUT_DIR, `${spec.slug}.webp`), { force: true }),
+      fs.rm(path.join(OUT_DIR, `${spec.slug}-portrait.webp`), { force: true }),
+    ]);
     await fs.copyFile(srcPath, outPng);
     const outStat = await fs.stat(outPng);
     console.log(
@@ -117,10 +129,17 @@ async function processOne(spec: AssetSpec) {
   const srcW = meta.width ?? FULL_WIDTH;
   const srcH = meta.height ?? FULL_WIDTH;
 
-  await sharp(srcPath)
-    .resize({ width: Math.min(FULL_WIDTH, srcW), withoutEnlargement: true })
-    .webp({ quality: 78, effort: 5 })
-    .toFile(outFull);
+  if (spec.cover) {
+    await sharp(srcPath)
+      .resize(spec.cover.width, spec.cover.height, { fit: "cover", position: spec.cover.position ?? "top" })
+      .webp({ quality: 82, effort: 5 })
+      .toFile(outFull);
+  } else {
+    await sharp(srcPath)
+      .resize({ width: Math.min(FULL_WIDTH, srcW), withoutEnlargement: true })
+      .webp({ quality: 78, effort: 5 })
+      .toFile(outFull);
+  }
   const fullStat = await fs.stat(outFull);
 
   let portraitStatSize: number | null = null;

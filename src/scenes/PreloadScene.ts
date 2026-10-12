@@ -36,9 +36,11 @@ export class PreloadScene extends Phaser.Scene {
     });
 
     const keys: Array<[string, string]> = [
+      ["title-art", "title-art"],
+      ["forest-archive-bg", "forest-archive-bg"],
+      ["forest-archive-rat", "forest-archive-rat"],
       ["start-mol", "start-mol"],
-      ["mona-intro", "mona-intro"],
-      ["mona-portrait", "mona-intro-portrait"],
+      ["mona-portrait", "mona-intro"],
       ["ducky-intro", "ducky-intro"],
       ["ducky-portrait", "ducky-intro-portrait"],
       ["copilot-intro", "copilot-intro"],
@@ -58,7 +60,6 @@ export class PreloadScene extends Phaser.Scene {
       const url = urlFor(slug);
       if (url) this.load.image(key, url);
     }
-
     const walkUrl = urlFor("adventurer-walk");
     if (walkUrl) {
       this.load.spritesheet("adventurer-walk", walkUrl, {
@@ -86,6 +87,9 @@ export class PreloadScene extends Phaser.Scene {
 
   create() {
     document.getElementById("boot-msg")?.remove();
+    if (this.textures.exists("forest-archive-rat")) {
+      this.textures.get("forest-archive-rat").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
     if (this.textures.exists("adventurer-walk")) {
       // Pixel-art: avoid bilinear blur on upscale.
       this.textures.get("adventurer-walk").setFilter(Phaser.Textures.FilterMode.NEAREST);
@@ -130,7 +134,39 @@ export class PreloadScene extends Phaser.Scene {
       }
     }
     this.generateRewardIcons();
+    this.generateParticleTextures();
     this.scene.start("Title");
+  }
+
+  private generateParticleTextures() {
+    const g = this.make.graphics({ x: 0, y: 0 }, false);
+
+    // Dust particle: soft circular puff for jumps/landings
+    g.clear();
+    g.fillStyle(0xffffff, 0.7);
+    g.fillCircle(4, 4, 3.5);
+    g.generateTexture("particle-dust", 8, 8);
+
+    // Sparkle particle: 4-pointed star
+    g.clear();
+    g.fillStyle(0xffffff, 1);
+    g.fillTriangle(6, 0, 8, 6, 4, 6);
+    g.fillTriangle(6, 12, 8, 6, 4, 6);
+    g.fillTriangle(0, 6, 6, 4, 6, 8);
+    g.fillTriangle(12, 6, 6, 4, 6, 8);
+    g.fillStyle(0xffe066, 0.9);
+    g.fillCircle(6, 6, 2.5);
+    g.generateTexture("particle-sparkle", 12, 12);
+
+    // Mote particle: tiny glowing ambient dot
+    g.clear();
+    g.fillStyle(0x6cd0ff, 0.4);
+    g.fillCircle(4, 4, 4);
+    g.fillStyle(0xffffff, 0.95);
+    g.fillCircle(4, 4, 2);
+    g.generateTexture("particle-mote", 8, 8);
+
+    g.destroy();
   }
 
   private generateRewardIcons() {

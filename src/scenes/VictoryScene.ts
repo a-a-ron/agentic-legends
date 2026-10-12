@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "../config";
 import { VICTORY_NARRATION } from "../data/story";
+import { AudioBus } from "../systems/AudioBus";
 
 /**
  * Victory screen. Shows the closing narration on the left and a
@@ -61,7 +62,10 @@ export class VictoryScene extends Phaser.Scene {
     }).setOrigin(0.5);
     this.tweens.add({ targets: [btn, btnLabel], alpha: 0.6, duration: 700, yoyo: true, repeat: -1 });
 
-    const restart = () => this.scene.start("Title");
+    const restart = () => {
+      AudioBus.uiClick();
+      this.scene.start("Title");
+    };
     btn.on("pointerdown", restart);
     this.input.keyboard?.once("keydown-SPACE", restart);
     this.input.keyboard?.once("keydown-ENTER", restart);

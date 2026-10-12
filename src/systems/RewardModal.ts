@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { fitWithin } from "../util/fit";
+import { AudioBus } from "./AudioBus";
 
 /**
  * Full-screen modal that displays a reward poster (full, uncropped).
@@ -49,6 +50,7 @@ export function showRewardModal(scene: Phaser.Scene, textureKey: string, caption
     scene.tweens.add({ targets: prompt, alpha: 0.4, duration: 700, yoyo: true, repeat: -1 });
 
     const advance = () => {
+      AudioBus.uiClick();
       cleanup();
       resolve();
     };

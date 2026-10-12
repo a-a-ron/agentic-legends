@@ -22,10 +22,16 @@ export interface LevelConfig {
   next: string;
   title: string;
   bgKey: string;
-  bgTint: number;
+  bgTint?: number;
+  bgAlpha?: number;
+  overlayAlpha?: number;
+  bgScrollFactor?: number;
   topColor: number;
   bottomColor: number;
   worldWidth: number;
+  enemyTextureKey?: string;
+  enemySpeed?: number;
+  enemyName?: string;
   platforms: PlatformDef[];
   enemies: Array<{ x: number; y: number; range: number }>;
   hiddenPlatforms?: PlatformDef[]; // visible only with "goggles"
@@ -55,6 +61,7 @@ export abstract class BaseLevelScene extends Phaser.Scene {
   protected escKey!: Phaser.Input.Keyboard.Key;
   protected muteKey!: Phaser.Input.Keyboard.Key;
   protected pauseOverlay?: Phaser.GameObjects.Container;
+  protected bgTile?: Phaser.GameObjects.TileSprite;
   protected isPaused = false;
   protected mentorTriggered = false;
   protected goalReached = false;
@@ -80,6 +87,7 @@ export abstract class BaseLevelScene extends Phaser.Scene {
     this.isPaused = false;
     this.pauseOverlay = undefined;
     this.reward = undefined;
+    this.bgTile = undefined;
 
     const cfg = this.config();
     this.physics.world.setBounds(0, 0, cfg.worldWidth, GAME_HEIGHT);
@@ -111,7 +119,7 @@ export abstract class BaseLevelScene extends Phaser.Scene {
 
     this.enemies = this.physics.add.group();
     for (const e of cfg.enemies) {
-      const enemy = new CorruptionEnemy(this, e.x, e.y, e.range);
+      const enemy = new CorruptionEnemy(this, e.x, e.y, e.range, cfg.enemyTextureKey, cfg.enemySpeed);
       this.enemies.add(enemy);
     }
     // Penalty bugs from previously-missed knowledge checks.
@@ -200,18 +208,33 @@ export abstract class BaseLevelScene extends Phaser.Scene {
 
   protected drawBackground(cfg: LevelConfig) {
     if (cfg.bgKey && this.textures.exists(cfg.bgKey)) {
-      const bg = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, cfg.bgKey);
-      const scale = Math.max(GAME_WIDTH / bg.width, GAME_HEIGHT / bg.height);
-      bg.setScale(scale).setAlpha(0.35).setScrollFactor(0.2).setTint(cfg.bgTint);
+      this.bgTile = this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, cfg.bgKey);
+      this.bgTile.setOrigin(0, 0).setScrollFactor(0);
+      const tex = this.textures.get(cfg.bgKey).getSourceImage();
+      if (tex && tex.width && tex.height) {
+        const scale = Math.max(GAME_WIDTH / tex.width, GAME_HEIGHT / tex.height);
+        this.bgTile.setTileScale(scale, scale);
+      }
+      this.bgTile.setAlpha(cfg.bgAlpha ?? 0.35);
+      if (cfg.bgTint !== undefined) {
+        this.bgTile.setTint(cfg.bgTint);
+      }
     }
-    const overlay = this.add.graphics();
-    overlay.fillGradientStyle(cfg.topColor, cfg.topColor, cfg.bottomColor, cfg.bottomColor, 0.35);
-    overlay.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-    overlay.setScrollFactor(0);
+    const overlayAlpha = cfg.overlayAlpha ?? 0.35;
+    if (overlayAlpha > 0) {
+      const overlay = this.add.graphics();
+      overlay.fillGradientStyle(cfg.topColor, cfg.topColor, cfg.bottomColor, cfg.bottomColor, overlayAlpha);
+      overlay.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+      overlay.setScrollFactor(0);
+    }
   }
 
   override update() {
     if (this.isPaused) return;
+    if (this.bgTile) {
+      const factor = this.config().bgScrollFactor ?? 0.2;
+      this.bgTile.tilePositionX = this.cameras.main.scrollX * factor;
+    }
     this.player.update();
     this.enemies.children.iterate((e) => { (e as CorruptionEnemy).update(); return true; });
     if (this.player.y > GAME_HEIGHT + 60) this.onFall();
@@ -220,6 +243,8 @@ export abstract class BaseLevelScene extends Phaser.Scene {
   protected onHit() {
     if (this.player.damage(this.time.now)) {
       AudioBus.hit();
+      this.cameras.main.shake(180, 0.012);
+      this.cameras.main.flash(120, 255, 60, 60, false);
       this.hud.setHearts(this.player.hearts);
       if (this.player.hearts <= 0) this.gameOver();
     }
@@ -277,6 +302,7 @@ export abstract class BaseLevelScene extends Phaser.Scene {
     this.player.hearts = 0;
     AudioBus.hit();
     this.hud.setHearts(0);
+    this.cameras.main.shake(250, 0.02);
     this.cameras.main.flash(220, 255, 90, 30);
     this.gameOver();
   }
@@ -303,6 +329,7 @@ export abstract class BaseLevelScene extends Phaser.Scene {
       if (this.goalReached) return;
       this.goalReached = true;
       AudioBus.collect();
+      this.spawnSparkleBurst(reward.x, reward.y);
       reward.destroy();
       this.player.grantPower(cfg.rewardPower);
       this.hud.setPowers(this.player.powers);
@@ -310,6 +337,27 @@ export abstract class BaseLevelScene extends Phaser.Scene {
       this.physics.pause();
       this.time.delayedCall(450, () => this.runEndOfLevel());
     });
+  }
+
+  protected spawnSparkleBurst(x: number, y: number, count: number = 24) {
+    if (!this.textures.exists("particle-sparkle")) return;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      const speed = 80 + Math.random() * 160;
+      const p = this.add.image(x, y, "particle-sparkle").setDepth(200);
+      p.setScale(0.8 + Math.random() * 0.8);
+      this.tweens.add({
+        targets: p,
+        x: x + Math.cos(angle) * speed,
+        y: y + Math.sin(angle) * speed,
+        alpha: 0,
+        scale: 0.1,
+        rotation: Math.random() * 4,
+        duration: 500 + Math.random() * 300,
+        ease: "Cubic.easeOut",
+        onComplete: () => p.destroy(),
+      });
+    }
   }
 
   private async runEndOfLevel() {
@@ -355,11 +403,11 @@ export abstract class BaseLevelScene extends Phaser.Scene {
     for (let i = 0; i < count; i++) {
       const x = margin + ((i + 1) * span) / (count + 1);
       const range = 160 + (i % 3) * 60;
-      const enemy = new CorruptionEnemy(this, x, ground - 60, range);
+      const enemy = new CorruptionEnemy(this, x, ground - 60, range, cfg.enemyTextureKey, cfg.enemySpeed);
       this.enemies.add(enemy);
     }
     this.time.delayedCall(400, () => {
-      const noun = count === 1 ? "bug" : "bugs";
+      const noun = count === 1 ? cfg.enemyName ?? "bug" : `${cfg.enemyName ?? "bug"}s`;
       this.hud.flashWarning(`⚠ ${count} extra ${noun} from missed knowledge checks!`);
     });
   }
