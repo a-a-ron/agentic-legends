@@ -52,7 +52,7 @@ const ASSETS: AssetSpec[] = [
   { file: "title-art.png", slug: "title-art", portrait: false, cover: { width: 1280, height: 720, position: "top" } },
   { file: "forest-archive-bg.png", slug: "forest-archive-bg", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
   { file: "start-mol.png", slug: "start-mol", portrait: false },
-  { file: "mona-intro.png", slug: "mona-intro", portrait: true },
+  { file: "mona-intro.png", slug: "mona-intro", portrait: false, passthrough: true },
   { file: "ducky-intro.png", slug: "ducky-intro", portrait: true },
   { file: "copilot-intro.png", slug: "copilot-intro", portrait: true },
   { file: "adventurer-bubbles-of-clarity.png", slug: "adventurer-bubbles", portrait: true },
@@ -83,6 +83,10 @@ async function processOne(spec: AssetSpec) {
 
   if (spec.passthrough) {
     const outPng = path.join(OUT_DIR, `${spec.slug}.png`);
+    await Promise.all([
+      fs.rm(path.join(OUT_DIR, `${spec.slug}.webp`), { force: true }),
+      fs.rm(path.join(OUT_DIR, `${spec.slug}-portrait.webp`), { force: true }),
+    ]);
     await fs.copyFile(srcPath, outPng);
     const outStat = await fs.stat(outPng);
     console.log(

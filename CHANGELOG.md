@@ -7,6 +7,13 @@ This project follows [Semantic Versioning](https://semver.org/) and
 Versions in the `0.x` range are **beta** — APIs, levels, and balance may
 change at any time. The first GA release will be `1.0.0`.
 
+## [0.1.13] - Beta
+
+### Changed
+- **Mona Character Artwork.** Replaced Mona's Forest Archive mentor portrait with
+  the new transparent pixel-art wizard image. The PNG is kept lossless to preserve
+  crisp pixel edges and transparency.
+
 ## [0.1.12] - Beta
 
 ### Added
