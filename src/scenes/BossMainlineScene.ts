@@ -18,6 +18,9 @@ export class BossMainlineScene extends Phaser.Scene {
   private platforms!: Phaser.Physics.Arcade.StaticGroup;
   private enemies!: Phaser.Physics.Arcade.Group;
   private orb?: Phaser.Physics.Arcade.Sprite;
+  private orbHalo?: Phaser.GameObjects.Arc;
+  private orbParticles?: Phaser.GameObjects.Particles.ParticleEmitter;
+  private nextOrbDirectionChange = 0;
   private orbTouched = false;
   private wrongAnswers = 0;
 
@@ -30,6 +33,14 @@ export class BossMainlineScene extends Phaser.Scene {
       powers: data.powers ?? [],
       hearts: data.hearts ?? 3,
     };
+  }
+
+  private chooseOrbDirection() {
+    if (!this.orb) return;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 120;
+    this.orb.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+    this.nextOrbDirectionChange = this.time.now + 1000 + Math.random() * 1800;
   }
 
   create() {
@@ -63,9 +74,8 @@ export class BossMainlineScene extends Phaser.Scene {
       { x: 360, y: ground - 60, range: 200 },
       { x: 720, y: ground - 60, range: 220 },
     ];
-    for (const e of baseEnemies) this.enemies.add(new CorruptionEnemy(this, e.x, e.y, e.range));
+    for (const e of baseEnemies) this.enemies.add(new CorruptionEnemy(this, e.x, e.y, e.range, undefined, 110, true));
     this.spawnPenaltyBugs(this.wrongAnswers, ground);
-    this.physics.add.collider(this.enemies, this.platforms);
     this.physics.add.overlap(this.player, this.enemies, () => this.onHit(), undefined, this);
 
     // The Copilot Orb — touch to win.
@@ -73,8 +83,8 @@ export class BossMainlineScene extends Phaser.Scene {
     const orbY = GAME_HEIGHT - 240;
 
     // Soft halo behind the orb (drawn first; depth just under orb).
-    const halo = this.add.circle(orbX, orbY, 90, 0x6cd0ff, 0.35).setDepth(9);
-    this.tweens.add({ targets: halo, scale: 1.2, alpha: 0.6, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+    this.orbHalo = this.add.circle(orbX, orbY, 90, 0x6cd0ff, 0.35).setDepth(9);
+    this.tweens.add({ targets: this.orbHalo, scale: 1.2, alpha: 0.6, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
 
     if (this.textures.exists("copilot-orb")) {
       this.orb = this.physics.add.sprite(orbX, orbY, "copilot-orb");
@@ -93,15 +103,16 @@ export class BossMainlineScene extends Phaser.Scene {
       this.orb = this.physics.add.sprite(orbX, orbY, "copilot-orb-fallback");
     }
     this.orb.setDepth(10);
-    (this.orb.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+    (this.orb.body as Phaser.Physics.Arcade.Body)
+      .setAllowGravity(false)
+      .setCollideWorldBounds(true)
+      .setBounce(1);
     (this.orb.body as Phaser.Physics.Arcade.Body).setImmovable(true);
-
-    this.tweens.add({ targets: this.orb, y: orbY - 16, duration: 1100, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
-    this.tweens.add({ targets: halo, y: orbY - 16, duration: 1100, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+    this.chooseOrbDirection();
 
     // Ambient floating energy around Copilot Orb
     if (this.textures.exists("particle-sparkle")) {
-      this.add.particles(orbX, orbY, "particle-sparkle", {
+      this.orbParticles = this.add.particles(orbX, orbY, "particle-sparkle", {
         scale: { start: 0.6, end: 0 },
         alpha: { start: 0.8, end: 0 },
         speed: { min: 20, max: 60 },
@@ -161,13 +172,18 @@ export class BossMainlineScene extends Phaser.Scene {
     for (let i = 0; i < count; i++) {
       const x = margin + ((i + 1) * span) / (count + 1);
       const range = 160 + (i % 3) * 60;
-      this.enemies.add(new CorruptionEnemy(this, x, ground - 60, range));
+      this.enemies.add(new CorruptionEnemy(this, x, ground - 60, range, undefined, 110, true));
     }
   }
 
   override update() {
     this.player.update();
     this.enemies.children.iterate((e) => { (e as CorruptionEnemy).update(); return true; });
+    if (this.orb) {
+      if (this.time.now >= this.nextOrbDirectionChange) this.chooseOrbDirection();
+      this.orbHalo?.setPosition(this.orb.x, this.orb.y);
+      this.orbParticles?.setPosition(this.orb.x, this.orb.y);
+    }
     if (this.player.y > GAME_HEIGHT + 60) {
       this.player.hearts = Math.max(0, this.player.hearts - 1);
       AudioBus.hit();

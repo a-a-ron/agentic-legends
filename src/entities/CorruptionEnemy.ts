@@ -5,8 +5,18 @@ export class CorruptionEnemy extends Phaser.Physics.Arcade.Sprite {
   private patrolMax: number;
   private speed: number;
   private direction = 1;
+  private randomMovement: boolean;
+  private nextDirectionChange = 0;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, range: number, textureKey?: string, speed = 55) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    range: number,
+    textureKey?: string,
+    speed = 55,
+    randomMovement = false,
+  ) {
     const tex = textureKey ?? ensureTexture(scene);
     super(scene, x, y, tex);
     if (textureKey) {
@@ -17,13 +27,27 @@ export class CorruptionEnemy extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(false);
     this.setBounce(0);
     this.speed = speed;
+    this.randomMovement = randomMovement;
     this.patrolMin = x - range;
     this.patrolMax = x + range;
-    this.setVelocityX(this.speed);
+    if (randomMovement) {
+      (this.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+      this.setCollideWorldBounds(true).setBounce(1);
+      this.chooseRandomDirection(scene.time.now);
+    } else {
+      this.setVelocityX(this.speed);
+    }
     this.setDepth(9);
   }
 
   override update() {
+    if (this.randomMovement) {
+      if (this.scene.time.now >= this.nextDirectionChange) {
+        this.chooseRandomDirection(this.scene.time.now);
+      }
+      this.setFlipX((this.body?.velocity.x ?? 0) < 0);
+      return;
+    }
     if (this.x < this.patrolMin) {
       this.direction = 1;
     } else if (this.x > this.patrolMax) {
@@ -31,6 +55,12 @@ export class CorruptionEnemy extends Phaser.Physics.Arcade.Sprite {
     }
     this.setVelocityX(this.direction * this.speed);
     this.setFlipX(this.direction < 0);
+  }
+
+  private chooseRandomDirection(now: number) {
+    const angle = Math.random() * Math.PI * 2;
+    this.setVelocity(Math.cos(angle) * this.speed, Math.sin(angle) * this.speed);
+    this.nextDirectionChange = now + 900 + Math.random() * 1800;
   }
 }
 
