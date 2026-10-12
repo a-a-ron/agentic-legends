@@ -7,6 +7,16 @@ This project follows [Semantic Versioning](https://semver.org/) and
 Versions in the `0.x` range are **beta** — APIs, levels, and balance may
 change at any time. The first GA release will be `1.0.0`.
 
+## [0.1.12] - Beta
+
+### Added
+- **Forest Archive Custom Background.** Updated Level 1 ("Forest Archives — find Mona")
+  with custom pixel-art dungeon library artwork featuring warm torchlit stone pillars,
+  ancient scrolls, archive bookshelves, and mystical glowing runes.
+- **Parallax Background Tiling.** Upgraded level background rendering in `BaseLevelScene`
+  to use seamless `TileSprite` parallax scrolling with configurable opacity, tint, and
+  scroll factors to prevent screen-edge clipping across wide levels.
+
 ## [0.1.11] - Beta
 
 ### Added

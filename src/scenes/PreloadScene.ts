@@ -37,6 +37,7 @@ export class PreloadScene extends Phaser.Scene {
 
     const keys: Array<[string, string]> = [
       ["title-art", "title-art"],
+      ["forest-archive-bg", "forest-archive-bg"],
       ["start-mol", "start-mol"],
       ["mona-intro", "mona-intro"],
       ["mona-portrait", "mona-intro-portrait"],
