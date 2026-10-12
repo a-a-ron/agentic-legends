@@ -41,6 +41,7 @@ export class PreloadScene extends Phaser.Scene {
       ["enchanted-forest", "enchanted-forest"],
       ["cloud-background", "cloud-background"],
       ["forest-archive-rat", "forest-archive-rat"],
+      ["frog-bug", "frog-bug"],
       ["start-mol", "start-mol"],
       ["mona-portrait", "mona-intro"],
       ["ducky-intro", "ducky-intro"],
@@ -94,6 +95,9 @@ export class PreloadScene extends Phaser.Scene {
     }
     if (this.textures.exists("copilot-portrait")) {
       this.textures.get("copilot-portrait").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+    if (this.textures.exists("frog-bug")) {
+      this.textures.get("frog-bug").setFilter(Phaser.Textures.FilterMode.NEAREST);
     }
     if (this.textures.exists("forest-archive-rat")) {
       this.textures.get("forest-archive-rat").setFilter(Phaser.Textures.FilterMode.NEAREST);

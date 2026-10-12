@@ -16,6 +16,8 @@ export class LevelDuckyScene extends BaseLevelScene {
       topColor: 0x102a43,
       bottomColor: 0x3aa0ff,
       worldWidth: 4000,
+      enemyTextureKey: "frog-bug",
+      enemyName: "frog",
       platforms: [
         { x: 2000, y: ground, w: 4000 },
         { x: 500, y: ground - 160, w: 160 },
