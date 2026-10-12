@@ -7,6 +7,14 @@ This project follows [Semantic Versioning](https://semver.org/) and
 Versions in the `0.x` range are **beta** — APIs, levels, and balance may
 change at any time. The first GA release will be `1.0.0`.
 
+## [0.1.10] - Beta
+
+### Changed
+- **New Knowledge Check questions.** The three trivia questions now cover
+  GitHub Copilot Proficiency and the Microsoft Pro Badge credential, with
+  a learning takeaway shown after each answer. Long answer options now
+  scale down to fit their row. (`src/data/quizzes.ts`, `src/systems/Quiz.ts`.)
+
 ## [0.1.9] - Beta
 
 ### Changed

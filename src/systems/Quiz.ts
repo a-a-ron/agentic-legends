@@ -77,13 +77,15 @@ export class Quiz {
       const yStart = h / 2 - (touch ? 60 : 30);
       q.options.forEach((opt, i) => {
         const y = yStart + i * rowStep;
-        const bg = this.scene.add.rectangle(w / 2, y, Math.min(w - 200, touch ? 940 : 720), rowH, 0x21262d, 1)
+        const rowW = Math.min(w - 200, touch ? 940 : 720);
+        const bg = this.scene.add.rectangle(w / 2, y, rowW, rowH, 0x21262d, 1)
           .setStrokeStyle(1, 0x30363d).setScrollFactor(0).setDepth(302).setInteractive({ useHandCursor: true });
         const t = this.scene.add.text(w / 2, y, `${String.fromCharCode(65 + i)}.  ${opt}`, {
           fontFamily: "system-ui, sans-serif",
           fontSize: `${optionSize}px`,
           color: "#e6edf3",
         }).setOrigin(0.5).setScrollFactor(0).setDepth(303);
+        if (t.width > rowW - 24) t.setScale((rowW - 24) / t.width);
         bg.on("pointerover", () => { if (!answered) bg.setFillStyle(0x30363d); });
         bg.on("pointerout", () => { if (!answered) bg.setFillStyle(0x21262d); });
         bg.on("pointerdown", () => choose(i));

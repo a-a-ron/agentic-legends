@@ -30,13 +30,14 @@ describe("QUIZZES dataset", () => {
     });
   }
 
-  it("uses the verified GH-600 answers", () => {
-    expect(QUIZZES.LevelMona.options[QUIZZES.LevelMona.correctIndex]).toBe("6");
-    expect(QUIZZES.LevelDucky.options[QUIZZES.LevelDucky.correctIndex]).toBe(
-      "Software Development Life Cycle",
+  it("uses the verified Copilot Proficiency answers", () => {
+    const pick = (k: string) => QUIZZES[k].options[QUIZZES[k].correctIndex];
+    expect(pick("LevelMona")).toBe(
+      "It verifies proficiency based on how you use GitHub Copilot in real-world workflows.",
     );
-    expect(QUIZZES.LevelCopilot.options[QUIZZES.LevelCopilot.correctIndex]).toBe(
-      "True",
+    expect(pick("LevelDucky")).toBe("Proficient, Advanced, and Expert");
+    expect(pick("LevelCopilot")).toBe(
+      "You've demonstrated a verified level of proficiency using GitHub Copilot.",
     );
   });
 });
