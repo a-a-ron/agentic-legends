@@ -9,6 +9,10 @@ change at any time. The first GA release will be `1.0.0`.
 
 ## [0.1.14] - Beta
 
+### Fixed
+- **Enemy Patrol Movement.** Restore patrol velocity after physics-group insertion
+  resets it, allowing rats and other enemies to move and turn at patrol boundaries.
+
 ### Changed
 - **Forest Archive Rats.** Replaced the first level's corruption bugs with the
   supplied pixel-art rat sprite; rats patrol slowly along the ground.
