@@ -16,6 +16,8 @@ export class LevelCopilotScene extends BaseLevelScene {
       topColor: 0x0a1f44,
       bottomColor: 0x6cd0ff,
       worldWidth: 4400,
+      enemyTextureKey: "bird",
+      enemyName: "bird",
       platforms: [
         // Three solid floor segments with gaps in between
         { x: 700, y: ground, w: 1400 },
