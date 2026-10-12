@@ -38,13 +38,19 @@ export class PreloadScene extends Phaser.Scene {
     const keys: Array<[string, string]> = [
       ["title-art", "title-art"],
       ["forest-archive-bg", "forest-archive-bg"],
+      ["enchanted-forest", "enchanted-forest"],
+      ["cloud-background", "cloud-background"],
+      ["final-background", "final-background"],
       ["forest-archive-rat", "forest-archive-rat"],
+      ["frog-bug", "frog-bug"],
+      ["bird", "bird"],
+      ["bat", "bat"],
       ["start-mol", "start-mol"],
       ["mona-portrait", "mona-intro"],
       ["ducky-intro", "ducky-intro"],
-      ["ducky-portrait", "ducky-intro-portrait"],
+      ["ducky-portrait", "ducky"],
       ["copilot-intro", "copilot-intro"],
-      ["copilot-portrait", "copilot-intro-portrait"],
+      ["copilot-portrait", "copilot2"],
       ["adventurer-bubbles", "adventurer-bubbles-portrait"],
       ["adventurer-fork", "adventurer-fork-portrait"],
       ["adventurer-goggles", "adventurer-goggles-portrait"],
@@ -87,6 +93,21 @@ export class PreloadScene extends Phaser.Scene {
 
   create() {
     document.getElementById("boot-msg")?.remove();
+    if (this.textures.exists("ducky-portrait")) {
+      this.textures.get("ducky-portrait").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+    if (this.textures.exists("copilot-portrait")) {
+      this.textures.get("copilot-portrait").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+    if (this.textures.exists("frog-bug")) {
+      this.textures.get("frog-bug").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+    if (this.textures.exists("bird")) {
+      this.textures.get("bird").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+    if (this.textures.exists("bat")) {
+      this.textures.get("bat").setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
     if (this.textures.exists("forest-archive-rat")) {
       this.textures.get("forest-archive-rat").setFilter(Phaser.Textures.FilterMode.NEAREST);
     }

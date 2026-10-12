@@ -1,16 +1,18 @@
 /**
- * Web Audio synth bus for retro SFX and ambient musical loops.
- * Zero external audio assets needed; synthesizes nostalgic 8-bit / 16-bit sound.
+ * Web Audio synth bus for retro SFX, plus a looping MP3 background theme.
  * Mute state is persisted in localStorage.
  */
+import themeUrl from "../assets/audio/theme.mp3?url";
+
 const KEY = "agentic-legends:muted";
 
 class AudioBusImpl {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
-  private bgGain: GainNode | null = null;
   private sfxGain: GainNode | null = null;
-  private bgInterval: number | null = null;
+  private music: HTMLAudioElement | null = null;
+  private wantMusic = false;
+  private gestureBound = false;
   private muted = false;
 
   constructor() {
@@ -34,10 +36,6 @@ class AudioBusImpl {
       this.sfxGain = this.ctx.createGain();
       this.sfxGain.gain.value = 0.65;
       this.sfxGain.connect(this.master);
-
-      this.bgGain = this.ctx.createGain();
-      this.bgGain.gain.value = 0.16;
-      this.bgGain.connect(this.master);
     }
     if (this.ctx && this.ctx.state === "suspended") {
       this.ctx.resume().catch(() => {});
@@ -52,6 +50,7 @@ class AudioBusImpl {
     if (this.master) {
       this.master.gain.value = this.muted ? 0 : 0.5;
     }
+    if (this.music) this.music.muted = this.muted;
     return this.muted;
   }
 
@@ -61,6 +60,7 @@ class AudioBusImpl {
     if (this.master) {
       this.master.gain.value = this.muted ? 0 : 0.5;
     }
+    if (this.music) this.music.muted = this.muted;
   }
 
   /** Play a frequency sweep (glide) with exponential envelope */
@@ -183,54 +183,38 @@ class AudioBusImpl {
     });
   }
 
-  // --- Background Music / Ambient loop ---
+  // --- Background Music ---
 
-  startBackground(scaleNotes: number[] = [261, 329, 392, 523, 392, 329], tempoMs: number = 340) {
+  /** Starts (or resumes) the looping MP3 theme. Does not restart if already playing. */
+  startBackground() {
     this.ensure();
-    this.stopBackground();
-    let i = 0;
-    const step = () => {
-      if (!this.ctx || !this.bgGain || this.muted) return;
-      const now = this.ctx.currentTime;
-      const f = scaleNotes[i % scaleNotes.length];
-
-      // Lead note (soft sine or warm triangle)
-      const osc = this.ctx.createOscillator();
-      const g = this.ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(f, now);
-      g.gain.setValueAtTime(0.0001, now);
-      g.gain.exponentialRampToValueAtTime(0.35, now + 0.04);
-      g.gain.exponentialRampToValueAtTime(0.0001, now + (tempoMs / 1000) * 0.9);
-      osc.connect(g).connect(this.bgGain);
-      osc.start(now);
-      osc.stop(now + (tempoMs / 1000) + 0.02);
-
-      // Bass note on every 4th step (one octave lower)
-      if (i % 4 === 0) {
-        const bassOsc = this.ctx.createOscillator();
-        const bassGain = this.ctx.createGain();
-        bassOsc.type = "triangle";
-        bassOsc.frequency.setValueAtTime(f / 2, now);
-        bassGain.gain.setValueAtTime(0.0001, now);
-        bassGain.gain.exponentialRampToValueAtTime(0.25, now + 0.06);
-        bassGain.gain.exponentialRampToValueAtTime(0.0001, now + (tempoMs / 1000) * 1.8);
-        bassOsc.connect(bassGain).connect(this.bgGain);
-        bassOsc.start(now);
-        bassOsc.stop(now + (tempoMs / 1000) * 2);
-      }
-
-      i++;
-    };
-    step();
-    this.bgInterval = window.setInterval(step, tempoMs);
+    if (!this.music) {
+      this.music = new Audio(themeUrl);
+      this.music.loop = true;
+      this.music.volume = 0.35;
+    }
+    this.music.muted = this.muted;
+    this.wantMusic = true;
+    this.tryPlayMusic();
   }
 
   stopBackground() {
-    if (this.bgInterval !== null) {
-      clearInterval(this.bgInterval);
-      this.bgInterval = null;
-    }
+    this.wantMusic = false;
+    this.music?.pause();
+  }
+
+  private tryPlayMusic() {
+    this.music?.play().catch(() => {
+      // Autoplay blocked until the first user gesture — retry once then.
+      if (this.gestureBound) return;
+      this.gestureBound = true;
+      const retry = () => {
+        this.gestureBound = false;
+        if (this.wantMusic) this.music?.play().catch(() => {});
+      };
+      window.addEventListener("pointerdown", retry, { once: true });
+      window.addEventListener("keydown", retry, { once: true });
+    });
   }
 }
 

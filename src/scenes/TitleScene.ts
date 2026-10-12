@@ -171,8 +171,8 @@ export class TitleScene extends Phaser.Scene {
     this.input.keyboard?.once("keydown-SPACE", start);
     this.input.keyboard?.once("keydown-ENTER", start);
 
-    // Title screen ambient theme
-    AudioBus.startBackground([220, 261, 330, 392, 330, 261, 196, 247, 294, 392, 294, 247], 320);
+    // Background theme
+    AudioBus.startBackground();
   }
 }
 

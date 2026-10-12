@@ -44,7 +44,6 @@ export interface LevelConfig {
   rewardPower: Power;
   mentorDialog: string[];
   startingPlayerTexture: string;
-  bgMusic?: number[];
 }
 
 export abstract class BaseLevelScene extends Phaser.Scene {
@@ -168,7 +167,7 @@ export abstract class BaseLevelScene extends Phaser.Scene {
       this.scene.start("Title");
     });
 
-    AudioBus.startBackground(cfg.bgMusic);
+    AudioBus.startBackground();
 
     // Goggles reveal
     this.events.on("update", () => {
