@@ -53,6 +53,7 @@ const ASSETS: AssetSpec[] = [
   { file: "forest-archive-bg.png", slug: "forest-archive-bg", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
   { file: "enchanted-forest.png", slug: "enchanted-forest", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
   { file: "cloud-background.png", slug: "cloud-background", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
+  { file: "final.png", slug: "final-background", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
   { file: "forest-archive-rat.png", slug: "forest-archive-rat", portrait: false, passthrough: true },
   { file: "frog-bug.png", slug: "frog-bug", portrait: false, passthrough: true },
   { file: "bird.png", slug: "bird", portrait: false, passthrough: true },

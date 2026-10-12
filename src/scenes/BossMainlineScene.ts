@@ -49,11 +49,15 @@ export class BossMainlineScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
     this.cameras.main.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-    const overlay = this.add.graphics();
-    overlay.fillGradientStyle(0x3a0d24, 0x3a0d24, 0xb02a55, 0xb02a55, 0.5);
-    overlay.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-    overlay.setScrollFactor(0);
-    overlay.setDepth(-10);
+    if (this.textures.exists("final-background")) {
+      const background = this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, "final-background");
+      background.setScale(Math.max(GAME_WIDTH / background.width, GAME_HEIGHT / background.height));
+      background.setScrollFactor(0).setDepth(-10);
+    }
+
+    this.add.rectangle(GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x0d1117, 0.12)
+      .setScrollFactor(0)
+      .setDepth(-9);
 
     this.platforms = this.physics.add.staticGroup();
     const ground = GAME_HEIGHT - 40;
