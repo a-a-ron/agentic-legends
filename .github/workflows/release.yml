@@ -64,7 +64,7 @@ jobs:
             echo ""
             echo "---"
             echo ""
-            echo "Play in the browser: https://arilivigni.github.io/agentic-legends/"
+            echo "Play in the browser: https://a-a-ron.github.io/agentic-legends/"
           } >> "$file"
           echo "Release notes:"
           cat "$file"
