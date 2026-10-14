@@ -41,12 +41,9 @@ export class VictoryScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif", fontSize: "18px", color: "#0969da",
       padding: { x: 12, y: 8 },
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-    leaderboard.on("pointerdown", () => {
-      AudioBus.uiClick();
-      window.open(
+    leaderboard.on("pointerup", () => {
+      window.location.assign(
         "https://eventgamingplatform-ep-iemwxn-cugxh6dcf2h6bvhh.b02.azurefd.net/Home/EventUnavailable?eventTag=Ignite20262026",
-        "_blank",
-        "noopener,noreferrer",
       );
     });
 
@@ -58,9 +55,8 @@ export class VictoryScene extends Phaser.Scene {
       fontFamily: "system-ui, sans-serif", fontSize: "18px", color: "#ffffff",
       backgroundColor: "#0969da", padding: { x: 18, y: 10 },
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-    proficiency.on("pointerdown", () => {
-      AudioBus.uiClick();
-      window.open("https://learn.github.com", "_blank", "noopener,noreferrer");
+    proficiency.on("pointerup", () => {
+      window.location.assign("https://learn.github.com");
     });
 
     // Tappable "Play again" button (also a visual cue for desktop).
