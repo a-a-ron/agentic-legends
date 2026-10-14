@@ -41,6 +41,7 @@ export class PreloadScene extends Phaser.Scene {
       ["enchanted-forest", "enchanted-forest"],
       ["cloud-background", "cloud-background"],
       ["final-background", "final-background"],
+      ["victory-background", "victory-background"],
       ["forest-archive-rat", "forest-archive-rat"],
       ["frog-bug", "frog-bug"],
       ["bird", "bird"],
