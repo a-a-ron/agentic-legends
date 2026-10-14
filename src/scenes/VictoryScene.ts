@@ -40,7 +40,7 @@ export class VictoryScene extends Phaser.Scene {
         fontFamily: "system-ui, sans-serif", fontSize: "16px", color: "#6e7681",
       }).setOrigin(0.5);
     }
-    this.add.text(qrX, qrY + qrSize / 2 + 24, "Microsoft Build • Codia Quest", {
+    this.add.text(qrX, qrY + qrSize / 2 + 24, "Microsoft Ignite - Codia Quest", {
       fontFamily: "system-ui, sans-serif", fontSize: "14px", color: "#3a0d24",
     }).setOrigin(0.5);
 

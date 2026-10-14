@@ -79,7 +79,7 @@ const ASSETS: AssetSpec[] = [
   // Copilot avatar → final-stand goal orb. Strip the white background.
   { file: "github-copilot.jpg", slug: "copilot-orb", portrait: false, alphaKey: { threshold: 720, size: 512 } },
   // QR code shown on Victory screen — passthrough preserves crispness for scanning.
-  { file: "al-qrcode.png", slug: "qr-code", portrait: false, passthrough: true },
+  { file: "ignite-code.png", slug: "qr-code", portrait: false, passthrough: true },
 ];
 
 async function ensureDir(dir: string) {
