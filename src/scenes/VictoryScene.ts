@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import { GAME_HEIGHT, GAME_WIDTH } from "../config";
-import { VICTORY_NARRATION } from "../data/story";
 import { AudioBus } from "../systems/AudioBus";
 
 /**
@@ -17,17 +16,11 @@ export class VictoryScene extends Phaser.Scene {
       bg.setScale(s);
     }
 
-    this.add.text(w / 2, 615, VICTORY_NARRATION.join("\n"), {
-      fontFamily: "Georgia, serif", fontSize: "16px", color: "#e6edf3",
-      align: "center", wordWrap: { width: w - 160 },
-      stroke: "#000", strokeThickness: 3,
-    }).setOrigin(0.5);
-
     // QR card.
     const qrX = w / 2;
-    const qrY = 430;
-    const qrSize = 200;
-    this.add.rectangle(qrX, qrY, 460, qrSize + 90, 0xffffff, 0.97)
+    const qrY = 412;
+    const qrSize = 180;
+    this.add.rectangle(qrX, 430, 460, 292, 0xffffff, 0.97)
       .setStrokeStyle(3, 0xf78166);
     this.add.text(qrX, qrY - qrSize / 2 - 24, "Scan to get points on the leaderboard!", {
       fontFamily: "Georgia, serif", fontSize: "20px", color: "#0d1117",
@@ -43,6 +36,32 @@ export class VictoryScene extends Phaser.Scene {
     this.add.text(qrX, qrY + qrSize / 2 + 24, "Microsoft Ignite - Codia Quest", {
       fontFamily: "system-ui, sans-serif", fontSize: "14px", color: "#3a0d24",
     }).setOrigin(0.5);
+
+    const leaderboard = this.add.text(qrX, 550, "Can't scan? Open the leaderboard", {
+      fontFamily: "system-ui, sans-serif", fontSize: "18px", color: "#0969da",
+      padding: { x: 12, y: 8 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    leaderboard.on("pointerdown", () => {
+      AudioBus.uiClick();
+      window.open(
+        "https://eventgamingplatform-ep-iemwxn-cugxh6dcf2h6bvhh.b02.azurefd.net/Home/EventUnavailable?eventTag=Ignite20262026",
+        "_blank",
+        "noopener,noreferrer",
+      );
+    });
+
+    this.add.text(w / 2, 594, "Discover your GitHub Copilot proficiency level!", {
+      fontFamily: "system-ui, sans-serif", fontSize: "20px", color: "#ffffff",
+      stroke: "#000", strokeThickness: 4,
+    }).setOrigin(0.5);
+    const proficiency = this.add.text(w / 2, 632, "Sign up for proficiency at learn.github.com", {
+      fontFamily: "system-ui, sans-serif", fontSize: "18px", color: "#ffffff",
+      backgroundColor: "#0969da", padding: { x: 18, y: 10 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    proficiency.on("pointerdown", () => {
+      AudioBus.uiClick();
+      window.open("https://learn.github.com", "_blank", "noopener,noreferrer");
+    });
 
     // Tappable "Play again" button (also a visual cue for desktop).
     const btn = this.add.rectangle(w / 2, h - 36, 280, 48, 0xf78166)
