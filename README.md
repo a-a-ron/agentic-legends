@@ -1,5 +1,8 @@
 # Agentic Legends
 
+<img width="1254" height="1254" alt="Agentic Legends_ Sacred Mainline" src="https://github.com/user-attachments/assets/b988c8fb-b42e-4d18-b4f5-8d6b40a1a09d" />
+
+
 A browser-based side-scrolling platformer built with [Phaser 3](https://phaser.io)
 + Vite + TypeScript. Inspired by the
 [`skills-dev/merge-of-legends`](https://github.com/skills-dev/merge-of-legends)
