@@ -54,6 +54,7 @@ const ASSETS: AssetSpec[] = [
   { file: "enchanted-forest.png", slug: "enchanted-forest", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
   { file: "cloud-background.png", slug: "cloud-background", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
   { file: "final.png", slug: "final-background", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
+  { file: "mainline.png", slug: "victory-background", portrait: false, cover: { width: 1280, height: 720, position: "center" } },
   { file: "forest-archive-rat.png", slug: "forest-archive-rat", portrait: false, passthrough: true },
   { file: "frog-bug.png", slug: "frog-bug", portrait: false, passthrough: true },
   { file: "bird.png", slug: "bird", portrait: false, passthrough: true },
@@ -78,7 +79,7 @@ const ASSETS: AssetSpec[] = [
   // Copilot avatar → final-stand goal orb. Strip the white background.
   { file: "github-copilot.jpg", slug: "copilot-orb", portrait: false, alphaKey: { threshold: 720, size: 512 } },
   // QR code shown on Victory screen — passthrough preserves crispness for scanning.
-  { file: "al-qrcode.png", slug: "qr-code", portrait: false, passthrough: true },
+  { file: "ignite-code.png", slug: "qr-code", portrait: false, passthrough: true },
 ];
 
 async function ensureDir(dir: string) {
